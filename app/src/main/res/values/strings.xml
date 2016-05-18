@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Departments</string>
+    <string name="item">item</string>
+    <string name="textViewSubDepartments">Sub Departments:</string>
+    <string name="employees">Employees:</string>
+    <string name="addDepartment">Add Department</string>
+</resources>
