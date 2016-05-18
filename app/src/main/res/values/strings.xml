@@ -4,4 +4,6 @@
     <string name="textViewSubDepartments">Sub Departments:</string>
     <string name="employees">Employees:</string>
     <string name="addDepartment">Add Department</string>
+    <string name="addSubDepartment">Add Sub Department</string>
+    <string name="addEmployee">Add Employee</string>
 </resources>

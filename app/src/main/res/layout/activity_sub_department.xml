@@ -9,10 +9,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.assignment.departments.SubDepartmentActivity">
 
+    <EditText
+        android:id="@+id/editTextSubDepartment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="300dp"
+        />
+
+    <Button
+        android:id="@+id/buttonAddSubDepartment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/addSubDepartment"
+        android:onClick="addSubDepartment"
+        android:layout_below="@+id/editTextSubDepartment"
+        />
+
     <TextView
         android:id="@+id/textViewDepartments"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonAddSubDepartment"
+        />
 
     <!--<TextView-->
         <!--android:id="@+id/textViewSubDepartment"-->

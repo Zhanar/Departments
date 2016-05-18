@@ -9,12 +9,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.assignment.departments.EmployeeActivity">
 
+    <EditText
+        android:id="@+id/editTextEmployee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="300dp"
+        />
 
+    <Button
+        android:id="@+id/buttonAddEmployee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/addEmployee"
+        android:onClick="addDepartment"
+        android:layout_below="@+id/editTextEmployee"
+        />
 
     <TextView
         android:id="@+id/textViewEmployees"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonAddEmployee"
+        />
 
     <!--<TextView-->
         <!--android:id="@+id/employees"-->

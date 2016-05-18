@@ -39,7 +39,7 @@ public class EmployeeActivity extends AppCompatActivity {
         listView = (ListView)findViewById(R.id.listViewEmployee);
         textViewEmployees = (TextView)findViewById(R.id.textViewEmployees);
 
-        if(d.getEmployees().size() != 0){
+        if(d.getEmployees().size() != 0) {
             textViewEmployees.setText("Employees:");
             for(int i = 0; i < d.getEmployees().size(); i++){
                 listEmployee.add(d.getEmployees().get(i));

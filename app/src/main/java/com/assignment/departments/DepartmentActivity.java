@@ -81,9 +81,7 @@ public class DepartmentActivity extends AppCompatActivity {
 
     public void addDepartment(View view) {
         //Intent intent = new Intent(this, AddDepartmentActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        //String department = editText.getText().toString();
-
+        EditText editText = (EditText) findViewById(R.id.editTextDepartment);
         AsyncHttpClient httpClient = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("title", editText.getText().toString());
