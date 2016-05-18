@@ -3,6 +3,7 @@ package com.assignment.departments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -74,6 +75,16 @@ public class DepartmentActivity extends AppCompatActivity {
                 Intent i = new Intent(DepartmentActivity.this, SubDepartmentActivity.class);
                 i.putExtra("department", listDepartment.get(position));
                 startActivity(i);
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder dialogAlert = new AlertDialog.Builder(getApplicationContext());
+                dialogAlert.setTitle("Demo ?");
+                dialogAlert.show();
+                return false;
             }
         });
 

@@ -13,7 +13,7 @@
         android:id="@+id/editTextEmployee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:width="300dp"
+        android:width="350dp"
         />
 
     <Button
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/addEmployee"
-        android:onClick="addDepartment"
+        android:onClick="addEmployee"
         android:layout_below="@+id/editTextEmployee"
         />
 
@@ -46,6 +46,5 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/textViewEmployees"
         />
-
 
 </RelativeLayout>

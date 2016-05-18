@@ -4,19 +4,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.assignment.departments.Model.Department;
 import com.assignment.departments.Model.Employee;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class EmployeeActivity extends AppCompatActivity {
 
@@ -24,13 +33,14 @@ public class EmployeeActivity extends AppCompatActivity {
     ArrayList<Employee> listEmployee;
     ListAdapter listAdapter;
     TextView textViewEmployees;
+    Department d;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee);
 
-        Department d = (Department)getIntent().getSerializableExtra("subDepartment");
+        d = (Department)getIntent().getSerializableExtra("subDepartment");
 
         getSupportActionBar().setTitle(d.getTitle());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,6 +60,20 @@ public class EmployeeActivity extends AppCompatActivity {
         }
         listAdapter = new ListAdapter(this, 0, listEmployee);
         listView.setAdapter(listAdapter);
+    }
+
+    public void addEmployee(View view) {
+        EditText editText = (EditText) findViewById(R.id.editTextEmployee);
+        AsyncHttpClient httpClient = new AsyncHttpClient();
+
+        RequestParams params = new RequestParams();
+        params.put("login", editText.getText().toString());
+        httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/AddEmployee", params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                Log.d("Added!", "" + response);
+            }
+        });
     }
 
     static class ListAdapter extends ArrayAdapter<Employee> {
