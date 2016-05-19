@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,10 +21,13 @@ import android.widget.TextView;
 import com.assignment.departments.Model.Department;
 import com.assignment.departments.Model.Employee;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class EmployeeActivity extends AppCompatActivity {
     ListAdapter listAdapter;
     TextView textViewEmployees;
     Department d;
+    AsyncHttpClient httpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,18 +82,72 @@ public class EmployeeActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        httpClient = new AsyncHttpClient();
+        final Employee s = listEmployee.get(info.position);
+        RequestParams params = new RequestParams();
+        params.put("orgUnitId", d.getId());
+//        try {
+//            params.put("userId", response.getInt("id"));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+        httpClient.delete("http://orgunitapi.azurewebsites.net/orgunit/RemoveEmployee", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                listAdapter.remove(s);
+                listAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                Log.d("Error", error.getMessage());
+            }
+        });
+        return true;
+    }
     public void addEmployee(View view) {
         EditText editText = (EditText) findViewById(R.id.editTextEmployee);
+
         AsyncHttpClient httpClient = new AsyncHttpClient();
+
 
         RequestParams params = new RequestParams();
         params.put("login", editText.getText().toString());
-        httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/AddEmployee", params, new JsonHttpResponseHandler() {
+        params.put("password", editText.getText().toString());
+
+
+        httpClient.post("http://orgunitapi.azurewebsites.net/User/Register", params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Added!", "" + response);
+                RequestParams params2 = new RequestParams();
+                params2.put("orgUnitId", d.getId());
+                try {
+                    params2.put("userId", response.getInt("id"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                AsyncHttpClient httpClient2 = new AsyncHttpClient();
+                httpClient2.post("http://orgunitapi.azurewebsites.net/OrgUnit/AddEmployee", params2, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        Log.d("Added!", "" + response);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                //super.onFailure(statusCode, headers, responseString, throwable);
+                int s = 8;
             }
         });
+
+
     }
 
     static class ListAdapter extends ArrayAdapter<Employee> {

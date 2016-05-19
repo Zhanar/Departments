@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.assignment.departments.Model.Department;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -41,6 +43,7 @@ public class DepartmentActivity extends AppCompatActivity {
     ListAdapter listAdapter;
     Gson gson = new Gson();
     Button buttonAdd;
+    AsyncHttpClient httpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,22 +57,10 @@ public class DepartmentActivity extends AppCompatActivity {
         listAdapter = new ListAdapter(this, 0, listDepartment);
         listView.setAdapter(listAdapter);
 
-        AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.get("http://orgunitapi.azurewebsites.net/orgunit/GetMainOrgUnits", new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("HTTP", "result " + response);
-                try {
-                    for (int i = 0; i < response.length(); ++i) {
-                        Department department = gson.fromJson(response.getString(i), Department.class);
-                        listDepartment.add(department);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                listAdapter.notifyDataSetChanged();
-            }
-        });
+        // TODO: 2
+        // create func
+
+        loadOrgUnits();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -83,15 +74,60 @@ public class DepartmentActivity extends AppCompatActivity {
         listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+
                 menu.setHeaderTitle("Delete selected item?");
                 String[] menuItems = new String[]{"Yes"};
-                for (int i = 0; i<menuItems.length; i++) {
+                for (int i = 0; i < menuItems.length; i++) {
                     menu.add(Menu.NONE, i, i, menuItems[i]);
                 }
             }
         });
+    }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        httpClient = new AsyncHttpClient();
+        final Department s = listDepartment.get(info.position);
+        RequestParams params = new RequestParams();
+        params.put("id", s.getId());
+
+        httpClient.delete("http://orgunitapi.azurewebsites.net/orgunit/Delete", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                listAdapter.remove(s);
+                listAdapter.notifyDataSetChanged();
+                loadOrgUnits();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                Log.d("Error", error.getMessage());
+            }
+        });
+        return true;
+    }
+
+    public void loadOrgUnits()
+    {
+        httpClient = new AsyncHttpClient();
+
+        httpClient.get("http://orgunitapi.azurewebsites.net/orgunit/GetMainOrgUnits", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                Log.d("HTTP", "result " + response);
+                listDepartment.clear();
+                try {
+                    for (int i = 0; i < response.length(); ++i) {
+                        Department department = gson.fromJson(response.getString(i), Department.class);
+                        listDepartment.add(department);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                listAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public void addDepartment(View view) {
@@ -102,8 +138,12 @@ public class DepartmentActivity extends AppCompatActivity {
         params.put("title", editText.getText().toString());
         httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/Create", params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Added!", "" + response);
+
+                // TODO: 1
+                // reload all org units
+                loadOrgUnits();
             }
         });
     }
@@ -133,6 +173,7 @@ public class DepartmentActivity extends AppCompatActivity {
             Department r = getItem(position);
             vh.item.setText(r.getTitle());
             vh.position.setText("" + position);
+
             return v;
         }
 

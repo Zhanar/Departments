@@ -24,13 +24,20 @@
         android:onClick="addSubDepartment"
         android:layout_below="@+id/editTextSubDepartment"
         />
-
     <TextView
-        android:id="@+id/textViewDepartments"
+        android:id="@+id/textViewHead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonAddSubDepartment"
         />
+    <TextView
+        android:id="@+id/textViewDepartments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewHead"
+        />
+
+
 
     <!--<TextView-->
         <!--android:id="@+id/textViewSubDepartment"-->

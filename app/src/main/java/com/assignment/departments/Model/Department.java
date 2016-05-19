@@ -14,6 +14,7 @@ public class Department implements Serializable {
     private Department orgUnitParrent;
     private ArrayList<Employee> employees;
     private ArrayList<Department> orgUnitChilds;
+    private int asd;
 
 
     public int getId() {
@@ -61,5 +62,13 @@ public class Department implements Serializable {
 
     public void setHeadUser(Employee headUser) {
         this.headUser = headUser;
+    }
+
+    public int getAsd() {
+        return asd;
+    }
+
+    public void setAsd(int asd) {
+        this.asd = asd;
     }
 }

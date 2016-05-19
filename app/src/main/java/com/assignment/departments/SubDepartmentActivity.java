@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.assignment.departments.Model.Department;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -37,9 +39,11 @@ public class SubDepartmentActivity extends AppCompatActivity {
 
     ListView listView;
     TextView textView;
+    TextView textViewHead;
     ArrayList<Department> listSubDepartment;
     DepartmentActivity.ListAdapter listAdapter;
     Department d;
+    AsyncHttpClient httpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +55,15 @@ public class SubDepartmentActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(d.getTitle());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        textViewHead = (TextView)findViewById(R.id.textViewHead);
+        textViewHead.setText("Head of Department: " + d.getHeadUser().getLogin());
+
         textView = (TextView)findViewById(R.id.textViewDepartments);
         //textView.setText(d.getTitle());
         listSubDepartment = new ArrayList<>();
         listView = (ListView)findViewById(R.id.listViewSubDepartment);
 
-        if(d.getOrgUnitChilds().size() != 0) {
+        if (d.getOrgUnitChilds().size() != 0) {
             textView.setText("Sub Departments:");
             for(int i = 0; i < d.getOrgUnitChilds().size(); i++) {
                 listSubDepartment.add(d.getOrgUnitChilds().get(i));
@@ -90,13 +97,35 @@ public class SubDepartmentActivity extends AppCompatActivity {
         });
     }
 
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        httpClient = new AsyncHttpClient();
+        final Department s = listSubDepartment.get(info.position);
+        RequestParams params = new RequestParams();
+        params.put("id", s.getId());
+
+        httpClient.delete("http://orgunitapi.azurewebsites.net/orgunit/Delete", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                listAdapter.remove(s);
+                listAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                Log.d("Error", error.getMessage());
+            }
+        });
+        return true;
+    }
+
     public void addSubDepartment(View view) {
         //Intent intent = new Intent(this, AddDepartmentActivity.class);
         EditText editText = (EditText) findViewById(R.id.editTextSubDepartment);
         AsyncHttpClient httpClient = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("title", editText.getText().toString());
-        params.put("orgUnitParrent", d.getOrgUnitParrent());
+        params.put("parrentOrgUnitId", d.getId());
         httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/Create", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
