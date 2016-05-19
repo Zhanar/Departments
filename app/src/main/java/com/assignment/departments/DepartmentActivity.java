@@ -3,6 +3,7 @@ package com.assignment.departments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.assignment.departments.Model.Department;
 import com.google.gson.Gson;
@@ -44,11 +46,15 @@ public class DepartmentActivity extends AppCompatActivity {
     Gson gson = new Gson();
     Button buttonAdd;
     AsyncHttpClient httpClient;
+    Boolean internet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_department);
+
+        internet = isNetworkConnected();
+        Toast.makeText(this, "Internet "+ internet, Toast.LENGTH_LONG).show();
 
         listDepartment = new ArrayList<>();
         listView = (ListView)findViewById(R.id.listViewDepartment);
@@ -82,6 +88,11 @@ public class DepartmentActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     @Override
@@ -131,7 +142,6 @@ public class DepartmentActivity extends AppCompatActivity {
     }
 
     public void addDepartment(View view) {
-        //Intent intent = new Intent(this, AddDepartmentActivity.class);
         EditText editText = (EditText) findViewById(R.id.editTextDepartment);
         AsyncHttpClient httpClient = new AsyncHttpClient();
         RequestParams params = new RequestParams();

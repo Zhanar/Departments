@@ -5,5 +5,6 @@
     <string name="employees">Employees:</string>
     <string name="addDepartment">Add Department</string>
     <string name="addSubDepartment">Add Sub Department</string>
+    <string name="changeHead">Change Head</string>
     <string name="addEmployee">Add Employee</string>
 </resources>

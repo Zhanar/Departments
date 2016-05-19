@@ -24,11 +24,21 @@
         android:onClick="addSubDepartment"
         android:layout_below="@+id/editTextSubDepartment"
         />
+
+    <Button
+        android:id="@+id/buttonChangeHead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/changeHead"
+        android:onClick="changeHead"
+        android:layout_below="@+id/buttonAddSubDepartment"
+        />
+
     <TextView
         android:id="@+id/textViewHead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonAddSubDepartment"
+        android:layout_below="@+id/buttonChangeHead"
         />
     <TextView
         android:id="@+id/textViewDepartments"
@@ -36,16 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewHead"
         />
-
-
-
-    <!--<TextView-->
-        <!--android:id="@+id/textViewSubDepartment"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/textViewSubDepartments"-->
-        <!--android:layout_below="@+id/textViewDepartmentTitle"-->
-        <!--/>-->
 
     <ListView
         android:id="@+id/listViewSubDepartment"

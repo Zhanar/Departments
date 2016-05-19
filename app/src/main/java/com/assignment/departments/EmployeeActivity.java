@@ -89,11 +89,7 @@ public class EmployeeActivity extends AppCompatActivity {
         final Employee s = listEmployee.get(info.position);
         RequestParams params = new RequestParams();
         params.put("orgUnitId", d.getId());
-//        try {
-//            params.put("userId", response.getInt("id"));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        params.put("userId", d.getEmployees().get(0).getId());
 
         httpClient.delete("http://orgunitapi.azurewebsites.net/orgunit/RemoveEmployee", params, new AsyncHttpResponseHandler() {
             @Override
@@ -109,6 +105,7 @@ public class EmployeeActivity extends AppCompatActivity {
         });
         return true;
     }
+
     public void addEmployee(View view) {
         EditText editText = (EditText) findViewById(R.id.editTextEmployee);
 
@@ -136,6 +133,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         Log.d("Added!", "" + response);
+                        listAdapter.notifyDataSetChanged();
                     }
                 });
             }

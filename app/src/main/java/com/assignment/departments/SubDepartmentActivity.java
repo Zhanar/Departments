@@ -15,11 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.assignment.departments.Model.Department;
+import com.assignment.departments.Model.Employee;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -44,6 +46,7 @@ public class SubDepartmentActivity extends AppCompatActivity {
     DepartmentActivity.ListAdapter listAdapter;
     Department d;
     AsyncHttpClient httpClient;
+    Button changeHead;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,5 +135,15 @@ public class SubDepartmentActivity extends AppCompatActivity {
                 Log.d("Added!", "" + response);
             }
         });
+    }
+
+    public void changeHead(View view) {
+
+        changeHead = (Button)findViewById(R.id.buttonChangeHead);
+
+        ArrayList<Employee> head = new ArrayList<>();
+        for(int i = 0; i < d.getEmployees().size(); i++) {
+            head.add(d.getEmployees().get(i));
+        }
     }
 }

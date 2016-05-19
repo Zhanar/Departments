@@ -3,6 +3,8 @@
     package="com.assignment.departments">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +21,6 @@
         </activity>
         <activity android:name=".SubDepartmentActivity" />
         <activity android:name=".EmployeeActivity" />
-        <activity android:name=".AddDepartmentActivity"></activity>
     </application>
 
 </manifest>
