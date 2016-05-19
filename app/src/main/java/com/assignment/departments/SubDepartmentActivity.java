@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -72,6 +74,18 @@ public class SubDepartmentActivity extends AppCompatActivity {
                 Intent i = new Intent(SubDepartmentActivity.this, EmployeeActivity.class);
                 i.putExtra("subDepartment", listSubDepartment.get(position));
                 startActivity(i);
+            }
+        });
+
+        listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+                menu.setHeaderTitle("Delete selected item?");
+                String[] menuItems = new String[]{"Yes"};
+                for (int i = 0; i<menuItems.length; i++) {
+                    menu.add(Menu.NONE, i, i, menuItems[i]);
+                }
             }
         });
     }
