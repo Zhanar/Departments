@@ -149,7 +149,7 @@ public class DepartmentActivity extends AppCompatActivity {
         httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/Create", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("Added!", "" + response);
+                Log.d("HTTP", "added-result " + response);
 
                 // TODO: 1
                 // reload all org units

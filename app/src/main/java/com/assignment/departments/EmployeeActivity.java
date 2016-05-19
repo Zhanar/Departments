@@ -120,7 +120,7 @@ public class EmployeeActivity extends AppCompatActivity {
         httpClient.post("http://orgunitapi.azurewebsites.net/User/Register", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("Added!", "" + response);
+                Log.d("HTTP", "added-result " + response);
                 RequestParams params2 = new RequestParams();
                 params2.put("orgUnitId", d.getId());
                 try {
@@ -132,7 +132,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 httpClient2.post("http://orgunitapi.azurewebsites.net/OrgUnit/AddEmployee", params2, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        Log.d("Added!", "" + response);
+                        Log.d("HTTP", "added-result " + response);
                         listAdapter.notifyDataSetChanged();
                     }
                 });

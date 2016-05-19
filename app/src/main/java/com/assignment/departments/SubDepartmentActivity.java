@@ -123,7 +123,7 @@ public class SubDepartmentActivity extends AppCompatActivity {
         httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/Create", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("Added!", "" + response);
+                Log.d("HTTP", "added-result " + response);
             }
         });
     }

@@ -63,7 +63,6 @@ public class ChangeTopManagerActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.d("HTTP", "added-result " + response);
-                           // head.setText(headName);
                             Intent intent = new Intent(ChangeTopManagerActivity.this, SubDepartmentActivity.class);
                             intent.putExtra("department", department);
                             startActivity(intent);
