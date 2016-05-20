@@ -29,12 +29,16 @@ import cz.msebera.android.httpclient.Header;
 
 public class SubDepartmentActivity extends AppCompatActivity {
 
-    ListView listView;
+    ListView listViewSubDepartment;
+    ListView listViewEmployee;
     TextView textView;
     TextView textViewHead;
     ArrayList<Department> listSubDepartment;
-    DepartmentActivity.ListAdapter listAdapter;
+    ArrayList<Employee> listEmployee;
+    DepartmentActivity.ListAdapter listAdapterDepartment;
+    EmployeeActivity.ListAdapter listAdapterEmployee;
     Department department;
+
     AsyncHttpClient httpClient;
     Button changeHead;
 
@@ -55,7 +59,10 @@ public class SubDepartmentActivity extends AppCompatActivity {
         textView = (TextView)findViewById(R.id.textViewDepartments);
         //textView.setText(department.getTitle());
         listSubDepartment = new ArrayList<>();
-        listView = (ListView)findViewById(R.id.listViewSubDepartment);
+        listEmployee = new ArrayList<>();
+
+        listViewSubDepartment = (ListView)findViewById(R.id.listViewSubDepartment);
+        listViewEmployee = (ListView)findViewById(R.id.listViewEmployeeInSubDepartment);
 
         if (department.getOrgUnitChilds().size() != 0) {
             textView.setText("Sub Departments:");
@@ -66,10 +73,19 @@ public class SubDepartmentActivity extends AppCompatActivity {
         else {
             textView.setText("There are no sub-departments in that Department.");
         }
-        listAdapter = new DepartmentActivity.ListAdapter(this, 0, listSubDepartment);
-        listView.setAdapter(listAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        if(department.getEmployees().size() != 0){
+            for(int i = 0; i < department.getEmployees().size(); i++) {
+                listEmployee.add(department.getEmployees().get(i));
+            }
+        }
+        listAdapterEmployee = new EmployeeActivity.ListAdapter(this, 0, listEmployee);
+        listViewEmployee.setAdapter(listAdapterEmployee);
+
+        listAdapterDepartment = new DepartmentActivity.ListAdapter(this, 0, listSubDepartment);
+        listViewSubDepartment.setAdapter(listAdapterDepartment);
+
+        listViewSubDepartment.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(SubDepartmentActivity.this, EmployeeActivity.class);
@@ -78,7 +94,7 @@ public class SubDepartmentActivity extends AppCompatActivity {
             }
         });
 
-        listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+        listViewSubDepartment.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
@@ -101,9 +117,8 @@ public class SubDepartmentActivity extends AppCompatActivity {
         httpClient.delete("http://orgunitapi.azurewebsites.net/orgunit/Delete", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
-                listAdapter.remove(s);
-                listAdapter.notifyDataSetChanged();
+                listAdapterDepartment.remove(s);
+                listAdapterDepartment.notifyDataSetChanged();
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
@@ -114,25 +129,20 @@ public class SubDepartmentActivity extends AppCompatActivity {
     }
 
     public void addSubDepartment(View view) {
-        //Intent intent = new Intent(this, AddDepartmentActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editTextSubDepartment);
-        AsyncHttpClient httpClient = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.put("title", editText.getText().toString());
-        params.put("parrentOrgUnitId", department.getId());
-        httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/Create", params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("HTTP", "added-result " + response);
-            }
-        });
+        Intent i = new Intent(SubDepartmentActivity.this, AddDepartmentActivity.class);
+        i.putExtra("subDepartment", listSubDepartment.get(0));
+        startActivity(i);
     }
 
     public void changeHead(View view) {
-
-
         Intent intent = new Intent(SubDepartmentActivity.this, ChangeTopManagerActivity.class);
         intent.putExtra("department", department);
         startActivity(intent);
+    }
+
+    public void addEmployeeInSubDepartment(View view) {
+        Intent i = new Intent(SubDepartmentActivity.this, AddEmployeeActivity.class);
+        i.putExtra("department", department);
+        startActivity(i);
     }
 }

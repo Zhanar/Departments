@@ -41,11 +41,11 @@ import cz.msebera.android.httpclient.Header;
 public class DepartmentActivity extends AppCompatActivity {
 
     ListView listView;
-    ArrayList<Department> listDepartment;
-    ListAdapter listAdapter;
-    Gson gson = new Gson();
+    static ArrayList<Department> listDepartment;
+    static ListAdapter listAdapter;
+    static Gson gson = new Gson();
     Button buttonAdd;
-    AsyncHttpClient httpClient;
+    static AsyncHttpClient httpClient;
     Boolean internet;
 
     @Override
@@ -119,7 +119,7 @@ public class DepartmentActivity extends AppCompatActivity {
         return true;
     }
 
-    public void loadOrgUnits()
+    public static void loadOrgUnits()
     {
         httpClient = new AsyncHttpClient();
 
@@ -142,20 +142,9 @@ public class DepartmentActivity extends AppCompatActivity {
     }
 
     public void addDepartment(View view) {
-        EditText editText = (EditText) findViewById(R.id.editTextDepartment);
-        AsyncHttpClient httpClient = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.put("title", editText.getText().toString());
-        httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/Create", params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("HTTP", "added-result " + response);
-
-                // TODO: 1
-                // reload all org units
-                loadOrgUnits();
-            }
-        });
+        Intent i = new Intent(DepartmentActivity.this, AddDepartmentActivity.class);
+        //i.putExtra("department", listDepartment.get(position));
+        startActivity(i);
     }
 
     static class ListAdapter extends ArrayAdapter<Department> {

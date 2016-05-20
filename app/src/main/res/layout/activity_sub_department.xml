@@ -9,20 +9,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.assignment.departments.SubDepartmentActivity">
 
-    <EditText
-        android:id="@+id/editTextSubDepartment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="300dp"
-        />
-
     <Button
         android:id="@+id/buttonAddSubDepartment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/addSubDepartment"
         android:onClick="addSubDepartment"
-        android:layout_below="@+id/editTextSubDepartment"
         />
 
     <Button
@@ -53,4 +45,21 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/textViewDepartments"
         />
+
+    <Button
+        android:id="@+id/addEmployeeInSubDepartment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/addEmployee"
+        android:onClick="addEmployeeInSubDepartment"
+        android:layout_below="@+id/listViewSubDepartment"
+        />
+
+    <ListView
+        android:id="@+id/listViewEmployeeInSubDepartment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/addEmployeeInSubDepartment"
+        />
+
 </RelativeLayout>

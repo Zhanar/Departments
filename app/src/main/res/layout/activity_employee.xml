@@ -9,20 +9,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.assignment.departments.EmployeeActivity">
 
-    <EditText
-        android:id="@+id/editTextEmployee"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="350dp"
-        />
-
     <Button
         android:id="@+id/buttonAddEmployee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/addEmployee"
         android:onClick="addEmployee"
-        android:layout_below="@+id/editTextEmployee"
         />
 
     <TextView
@@ -31,14 +23,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonAddEmployee"
         />
-
-    <!--<TextView-->
-        <!--android:id="@+id/employees"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/employees"-->
-        <!--android:layout_below="@+id/textViewNoEmployees"-->
-        <!--/>-->
 
     <ListView
         android:id="@+id/listViewEmployee"
