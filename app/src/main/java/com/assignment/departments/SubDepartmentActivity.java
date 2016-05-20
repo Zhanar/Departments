@@ -38,6 +38,7 @@ public class SubDepartmentActivity extends AppCompatActivity {
     DepartmentActivity.ListAdapter listAdapterDepartment;
     EmployeeActivity.ListAdapter listAdapterEmployee;
     Department department;
+    Boolean internet;
 
     AsyncHttpClient httpClient;
     Button changeHead;
@@ -47,6 +48,7 @@ public class SubDepartmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub_department);
 
+//        internet = DepartmentActivity.isNetworkConnected();
         department = (Department)getIntent().getSerializableExtra("department");
 
         getSupportActionBar().setTitle(department.getTitle());

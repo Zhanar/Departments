@@ -3,6 +3,8 @@ package com.assignment.departments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -56,17 +58,75 @@ public class DepartmentActivity extends AppCompatActivity {
         internet = isNetworkConnected();
         Toast.makeText(this, "Internet "+ internet, Toast.LENGTH_LONG).show();
 
-        listDepartment = new ArrayList<>();
-        listView = (ListView)findViewById(R.id.listViewDepartment);
-        buttonAdd = (Button)findViewById(R.id.buttonAdd);
+        if (internet) {
+            listDepartment = new ArrayList<>();
+            listView = (ListView)findViewById(R.id.listViewDepartment);
+            buttonAdd = (Button)findViewById(R.id.buttonAdd);
 
-        listAdapter = new ListAdapter(this, 0, listDepartment);
-        listView.setAdapter(listAdapter);
+            listAdapter = new ListAdapter(this, 0, listDepartment);
+            listView.setAdapter(listAdapter);
 
-        // TODO: 2
-        // create func
+            loadOrgUnits();
 
-        loadOrgUnits();
+            listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+                    menu.setHeaderTitle("Delete selected item?");
+                    String[] menuItems = new String[]{"Yes"};
+                    for (int i = 0; i < menuItems.length; i++) {
+                        menu.add(Menu.NONE, i, i, menuItems[i]);
+                    }
+                }
+            });
+        }
+        else {
+            SQLiteDatabase myDB = null;
+            String TableName = "Departments";
+            String Data = "";
+
+            /* Create a Database. */
+            try {
+                myDB = this.openOrCreateDatabase("DatabaseName", MODE_PRIVATE, null);
+
+                /* Create a Table in the Database. */
+                myDB.execSQL("CREATE TABLE IF NOT EXISTS "
+                        + TableName
+                        + " (id VARCHAR, Field2 INT(3));");
+
+                /* Insert data to a Table*/
+                myDB.execSQL("INSERT INTO "
+                        + TableName
+                        + " (Field1, Field2)"
+                        + " VALUES ('Saranga', 22);");
+
+                /*retrieve data from database */
+                Cursor c = myDB.rawQuery("SELECT * FROM " + TableName , null);
+
+                int Column1 = c.getColumnIndex("Field1");
+                int Column2 = c.getColumnIndex("Field2");
+
+                // Check if our result was valid.
+                c.moveToFirst();
+                if (c != null) {
+                    // Loop through all Results
+                    do {
+                        String Name = c.getString(Column1);
+                        int Age = c.getInt(Column2);
+                        Data =Data +Name+"/"+Age+"\n";
+                    }while(c.moveToNext());
+                }
+                TextView tv = new TextView(this);
+                tv.setText(Data);
+                setContentView(tv);
+            }
+            catch(Exception e) {
+                Log.e("Error", "Error", e);
+            } finally {
+                if (myDB != null)
+                    myDB.close();
+            }
+        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,21 +136,9 @@ public class DepartmentActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-        listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
-                menu.setHeaderTitle("Delete selected item?");
-                String[] menuItems = new String[]{"Yes"};
-                for (int i = 0; i < menuItems.length; i++) {
-                    menu.add(Menu.NONE, i, i, menuItems[i]);
-                }
-            }
-        });
     }
 
-    private boolean isNetworkConnected() {
+    public boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
