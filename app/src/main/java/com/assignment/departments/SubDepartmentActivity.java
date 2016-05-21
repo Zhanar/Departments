@@ -56,7 +56,10 @@ public class SubDepartmentActivity extends AppCompatActivity {
 
         changeHead = (Button)findViewById(R.id.buttonChangeHead);
         textViewHead = (TextView)findViewById(R.id.textViewHead);
-        textViewHead.setText("Head of Department: " + department.getHeadUser().getLogin());
+
+        if(department.getHeadUser() != null){
+            textViewHead.setText("Head of Department: " + department.getHeadUser().getLogin());
+        }
 
         textView = (TextView)findViewById(R.id.textViewDepartments);
         //textView.setText(department.getTitle());

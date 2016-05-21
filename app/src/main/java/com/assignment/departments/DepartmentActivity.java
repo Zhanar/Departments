@@ -58,14 +58,14 @@ public class DepartmentActivity extends AppCompatActivity {
         internet = isNetworkConnected();
         Toast.makeText(this, "Internet "+ internet, Toast.LENGTH_LONG).show();
 
+        listDepartment = new ArrayList<>();
+        listView = (ListView)findViewById(R.id.listViewDepartment);
+        listAdapter = new ListAdapter(this, 0, listDepartment);
+        listView.setAdapter(listAdapter);
+
         if (internet) {
-            listDepartment = new ArrayList<>();
-            listView = (ListView)findViewById(R.id.listViewDepartment);
+
             buttonAdd = (Button)findViewById(R.id.buttonAdd);
-
-            listAdapter = new ListAdapter(this, 0, listDepartment);
-            listView.setAdapter(listAdapter);
-
             loadOrgUnits();
 
             listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
@@ -81,40 +81,50 @@ public class DepartmentActivity extends AppCompatActivity {
             });
         }
         else {
+
+        }
+
+        if(listDepartment.size() != 0){
             SQLiteDatabase myDB = null;
-            String TableName = "Departments";
             String Data = "";
 
             /* Create a Database. */
             try {
                 myDB = this.openOrCreateDatabase("DatabaseName", MODE_PRIVATE, null);
 
-                /* Create a Table in the Database. */
-                myDB.execSQL("CREATE TABLE IF NOT EXISTS "
-                        + TableName
-                        + " (id VARCHAR, Field2 INT(3));");
+            /* Create a Table in the Database. */
+                myDB.execSQL("CREATE TABLE IF NOT EXISTS OrgUnitVM"
+                        + " (id INTEGER, title TEXT);");
+
 
                 /* Insert data to a Table*/
-                myDB.execSQL("INSERT INTO "
-                        + TableName
-                        + " (Field1, Field2)"
-                        + " VALUES ('Saranga', 22);");
+//                for(int i = 0; i < listDepartment.size(); i++){
+//                    myDB.execSQL("INSERT INTO OrgUnitVM"
+//                            + " (id, title)"
+//                            + " VALUES ("+ listDepartment.get(i).getId() +", ' "+ listDepartment.get(i).getTitle() +" ');");
+//                }
 
-                /*retrieve data from database */
-                Cursor c = myDB.rawQuery("SELECT * FROM " + TableName , null);
+                myDB.execSQL("INSERT INTO OrgUnitVM"
+                        + " (id, title)"
+                        + " VALUES ('1', 'department');");
 
-                int Column1 = c.getColumnIndex("Field1");
-                int Column2 = c.getColumnIndex("Field2");
+
+            /*retrieve data from database */
+                Cursor c = myDB.rawQuery("SELECT * FROM OrgUnitVM" , null);
+
+                int Column1 = c.getColumnIndex("id");
+                int Column2 = c.getColumnIndex("title");
 
                 // Check if our result was valid.
                 c.moveToFirst();
                 if (c != null) {
                     // Loop through all Results
                     do {
-                        String Name = c.getString(Column1);
-                        int Age = c.getInt(Column2);
-                        Data =Data +Name+"/"+Age+"\n";
-                    }while(c.moveToNext());
+                        int id = c.getInt(Column1);
+                        String title = c.getString(Column2);
+
+                        Data = Data + id + "/"+ title+"\n";
+                    } while (c.moveToNext());
                 }
                 TextView tv = new TextView(this);
                 tv.setText(Data);
