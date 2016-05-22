@@ -41,6 +41,7 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class DepartmentActivity extends AppCompatActivity {
+    final String TAG = "States";
 
     ListView listView;
     static ArrayList<Department> listDepartment;
@@ -49,11 +50,20 @@ public class DepartmentActivity extends AppCompatActivity {
     Button buttonAdd;
     static AsyncHttpClient httpClient;
     Boolean internet;
+    Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_department);
+
+        // подключаемся к БД
+//        database = new Database(this);
+//        database.open();
+//
+//        // готовим данные по группам для адаптера
+//        Cursor cursor = database.getDepartmentData();
+//        startManagingCursor(cursor);
 
         internet = isNetworkConnected();
         Toast.makeText(this, "Internet "+ internet, Toast.LENGTH_LONG).show();
@@ -83,6 +93,20 @@ public class DepartmentActivity extends AppCompatActivity {
         else {
 
         }
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(DepartmentActivity.this, SubDepartmentActivity.class);
+                i.putExtra("department", listDepartment.get(position));
+                startActivity(i);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "MainActivity: onStart()");
 
         if(listDepartment.size() != 0){
             SQLiteDatabase myDB = null;
@@ -92,21 +116,25 @@ public class DepartmentActivity extends AppCompatActivity {
             try {
                 myDB = this.openOrCreateDatabase("DatabaseName", MODE_PRIVATE, null);
 
+                myDB.execSQL("DROP TABLE OrgUnitVM");
             /* Create a Table in the Database. */
                 myDB.execSQL("CREATE TABLE IF NOT EXISTS OrgUnitVM"
                         + " (id INTEGER, title TEXT);");
 
 
                 /* Insert data to a Table*/
-//                for(int i = 0; i < listDepartment.size(); i++){
-//                    myDB.execSQL("INSERT INTO OrgUnitVM"
-//                            + " (id, title)"
-//                            + " VALUES ("+ listDepartment.get(i).getId() +", ' "+ listDepartment.get(i).getTitle() +" ');");
-//                }
+                for(int i = 0; i < listDepartment.size(); i++){
+                    if(listDepartment.get(i).getId()!= 92){
+                        myDB.execSQL("INSERT INTO OrgUnitVM"
+                                + " (id, title)"
+                                + " VALUES ("+ listDepartment.get(i).getId() +", ' "+ listDepartment.get(i).getTitle() +" ');");
+                    }
 
-                myDB.execSQL("INSERT INTO OrgUnitVM"
-                        + " (id, title)"
-                        + " VALUES ('1', 'department');");
+                }
+
+//                myDB.execSQL("INSERT INTO OrgUnitVM"
+//                        + " (id, title)"
+//                        + " VALUES ('1', 'department');");
 
 
             /*retrieve data from database */
@@ -137,15 +165,17 @@ public class DepartmentActivity extends AppCompatActivity {
                     myDB.close();
             }
         }
+    }
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(DepartmentActivity.this, SubDepartmentActivity.class);
-                i.putExtra("department", listDepartment.get(position));
-                startActivity(i);
-            }
-        });
+    protected Cursor getChildrenCursor(Cursor groupCursor) {
+        // получаем курсор по элементам для конкретной группы
+        int idColumn = groupCursor.getColumnIndex(Database.DEPARTMENT_COLUMN_ID);
+        return database.getEmployeeData(groupCursor.getInt(idColumn));
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        database.close();
     }
 
     public boolean isNetworkConnected() {
