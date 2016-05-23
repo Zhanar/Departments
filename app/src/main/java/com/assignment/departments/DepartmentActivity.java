@@ -74,7 +74,6 @@ public class DepartmentActivity extends AppCompatActivity {
         listView.setAdapter(listAdapter);
 
         if (internet) {
-
             buttonAdd = (Button)findViewById(R.id.buttonAdd);
             loadOrgUnits();
 
@@ -91,7 +90,9 @@ public class DepartmentActivity extends AppCompatActivity {
             });
         }
         else {
-
+            listDepartment = database.GetDepartmentCollection();
+            listAdapter = new ListAdapter(this, 0, listDepartment);
+            listView.setAdapter(listAdapter);
         }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
