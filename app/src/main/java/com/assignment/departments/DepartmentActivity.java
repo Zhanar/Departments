@@ -50,7 +50,7 @@ public class DepartmentActivity extends AppCompatActivity {
     Button buttonAdd;
     static AsyncHttpClient httpClient;
     Boolean internet;
-    Database database;
+    static Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +58,12 @@ public class DepartmentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_department);
 
         // подключаемся к БД
-//        database = new Database(this);
-//        database.open();
-//
-//        // готовим данные по группам для адаптера
-//        Cursor cursor = database.getDepartmentData();
-//        startManagingCursor(cursor);
+        database = new Database(this);
+        database.open();
+
+        // готовим данные по группам для адаптера
+        Cursor cursor = database.getDepartmentData();
+        startManagingCursor(cursor);
 
         internet = isNetworkConnected();
         Toast.makeText(this, "Internet "+ internet, Toast.LENGTH_LONG).show();
@@ -102,7 +102,7 @@ public class DepartmentActivity extends AppCompatActivity {
             }
         });
     }
-
+/*
     @Override
     protected void onStart() {
         super.onStart();
@@ -112,24 +112,46 @@ public class DepartmentActivity extends AppCompatActivity {
             SQLiteDatabase myDB = null;
             String Data = "";
 
-            /* Create a Database. */
+            // Create a Database.
             try {
                 myDB = this.openOrCreateDatabase("DatabaseName", MODE_PRIVATE, null);
 
                 myDB.execSQL("DROP TABLE OrgUnitVM");
-            /* Create a Table in the Database. */
+                myDB.execSQL("DROP TABLE UserVM");
+
+                // Create a Table in the Database.
                 myDB.execSQL("CREATE TABLE IF NOT EXISTS OrgUnitVM"
-                        + " (id INTEGER, title TEXT);");
+                        + " (_id INTEGER, title TEXT, headUserId INTEGER, orgUnitParentId INTEGER, employeesId INTEGER, orgUnitChildId INTEGER);");
+
+                myDB.execSQL("CREATE TABLE IF NOT EXISTS UserVM"
+                        + " (_id INTEGER, login TEXT, password TEXT);");
 
 
-                /* Insert data to a Table*/
+                // Insert data to a Table
                 for(int i = 0; i < listDepartment.size(); i++){
                     if(listDepartment.get(i).getId()!= 92){
-                        myDB.execSQL("INSERT INTO OrgUnitVM"
-                                + " (id, title)"
-                                + " VALUES ("+ listDepartment.get(i).getId() +", ' "+ listDepartment.get(i).getTitle() +" ');");
-                    }
+                        for(int j = 0; j < listDepartment.get(i).getEmployees().size(); j++){
+                            for (int l = 0; l < listDepartment.get(i).getOrgUnitChilds().size(); l++){
+//                                if(listDepartment.get(i).getOrgUnitParrent() != null){
+                                    myDB.execSQL("INSERT INTO OrgUnitVM"
+                                            + " (_id, title, headUserId, employeesId, orgUnitChildId)"
+                                            + " VALUES ("+ listDepartment.get(i).getId() + ", ' "
+                                            + listDepartment.get(i).getTitle() + " ' , "
+                                            + listDepartment.get(i).getHeadUser().getId() + " , "
+//                                            + " ISNULL( "+listDepartment.get(i).getOrgUnitParrent() + ", 0) , "
+                                            + listDepartment.get(i).getEmployees().get(j).getId() + " , "
+                                            + listDepartment.get(i).getOrgUnitChilds().get(l).getId() +" );");
+//                                }
 
+                            }
+
+                            myDB.execSQL("INSERT INTO UserVM"
+                                    + " (_id, login, password)"
+                                    + " VALUES ("+ listDepartment.get(i).getEmployees().get(j).getId() + " , ' "
+                                    + listDepartment.get(i).getEmployees().get(j).getLogin() + " ' , ' "
+                                    + listDepartment.get(i).getEmployees().get(j).getPassword() + " ' );");
+                        }
+                    }
                 }
 
 //                myDB.execSQL("INSERT INTO OrgUnitVM"
@@ -137,22 +159,47 @@ public class DepartmentActivity extends AppCompatActivity {
 //                        + " VALUES ('1', 'department');");
 
 
-            /*retrieve data from database */
-                Cursor c = myDB.rawQuery("SELECT * FROM OrgUnitVM" , null);
+            // retrieve data from database
+                Cursor cursorDepartment = myDB.rawQuery("SELECT * FROM OrgUnitVM" , null);
+                Cursor cursorEmployee = myDB.rawQuery("SELECT * FROM Employee" , null);
 
-                int Column1 = c.getColumnIndex("id");
-                int Column2 = c.getColumnIndex("title");
+                int ColumnId = cursorDepartment.getColumnIndex("_id");
+                int ColumnTitle = cursorDepartment.getColumnIndex("title");
+                int ColumnHeadUserId = cursorDepartment.getColumnIndex("headUserId");
+                int ColumnOrgUnitParentId = cursorDepartment.getColumnIndex("orgUnitParentId");
+                int ColumnEmployeesId = cursorDepartment.getColumnIndex("employeesId");
+                int ColumnOrgUnitChildId = cursorDepartment.getColumnIndex("orgUnitChildId");
+
+                int ColumnEmployeeId = cursorEmployee.getColumnIndex("_id");
+                int ColumnEmployeeLogin = cursorEmployee.getColumnIndex("login");
+                int ColumnEmployeePassword = cursorEmployee.getColumnIndex("password");
+
 
                 // Check if our result was valid.
-                c.moveToFirst();
-                if (c != null) {
+                cursorDepartment.moveToFirst();
+                if (cursorDepartment != null) {
                     // Loop through all Results
                     do {
-                        int id = c.getInt(Column1);
-                        String title = c.getString(Column2);
+                        int id = cursorDepartment.getInt(ColumnId);
+                        String title = cursorDepartment.getString(ColumnTitle);
+                        int headUserId = cursorDepartment.getInt(ColumnHeadUserId);
+                        int orgUnitParentId = cursorDepartment.getInt(ColumnOrgUnitParentId);
+                        int employeesId = cursorDepartment.getInt(ColumnEmployeesId);
+                        int orgUnitChildId = cursorDepartment.getInt(ColumnOrgUnitChildId);
 
-                        Data = Data + id + "/"+ title+"\n";
-                    } while (c.moveToNext());
+                        Data = Data + id + " / " + title + " / " + headUserId + " / " + orgUnitParentId + " / " + employeesId + " / " + orgUnitChildId + "\n";
+                    } while (cursorDepartment.moveToNext());
+                }
+
+                cursorEmployee.moveToFirst();
+                if(cursorEmployee != null){
+                    do {
+                        int employeeId = cursorDepartment.getInt(ColumnEmployeeId);
+                        String employeeLogin = cursorDepartment.getString(ColumnEmployeeLogin);
+                        String employeePassword = cursorDepartment.getString(ColumnEmployeePassword);
+                        Data += "Employee: " + employeeId + " / " + employeeLogin + " / " + employeePassword + "\n";
+                    }
+                    while(cursorEmployee.moveToNext());
                 }
                 TextView tv = new TextView(this);
                 tv.setText(Data);
@@ -166,7 +213,7 @@ public class DepartmentActivity extends AppCompatActivity {
             }
         }
     }
-
+*/
     protected Cursor getChildrenCursor(Cursor groupCursor) {
         // получаем курсор по элементам для конкретной группы
         int idColumn = groupCursor.getColumnIndex(Database.DEPARTMENT_COLUMN_ID);
@@ -221,6 +268,7 @@ public class DepartmentActivity extends AppCompatActivity {
                         Department department = gson.fromJson(response.getString(i), Department.class);
                         listDepartment.add(department);
                     }
+                    database.SaveDepartments(listDepartment);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
