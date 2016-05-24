@@ -52,7 +52,12 @@ public class AddDepartmentActivity extends AppCompatActivity {
         }
         else {
             params.put("title", editText.getText().toString());
-            params.put("parrentOrgUnitId", subDepartment.getOrgUnitParrent().getId());
+            if(subDepartment.getOrgUnitParrent() != null) {
+                params.put("parrentOrgUnitId", subDepartment.getOrgUnitParrent().getId());
+            }
+            else {
+                params.put("parrentOrgUnitId", subDepartment.getId());
+            }
             httpClient.post("http://orgunitapi.azurewebsites.net/OrgUnit/Create", params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

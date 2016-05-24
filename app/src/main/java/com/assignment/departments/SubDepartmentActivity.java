@@ -135,7 +135,12 @@ public class SubDepartmentActivity extends AppCompatActivity {
 
     public void addSubDepartment(View view) {
         Intent i = new Intent(SubDepartmentActivity.this, AddDepartmentActivity.class);
-        i.putExtra("subDepartment", listSubDepartment.get(0));
+        if(listSubDepartment.size() != 0){
+            i.putExtra("subDepartment", listSubDepartment.get(0));
+        }
+        else{
+            i.putExtra("subDepartment", department);
+        }
         startActivity(i);
     }
 
