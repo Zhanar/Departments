@@ -1,6 +1,8 @@
 package com.assignment.departments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,16 +32,15 @@ import cz.msebera.android.httpclient.Header;
 public class SubDepartmentActivity extends AppCompatActivity {
 
     ListView listViewSubDepartment;
-    ListView listViewEmployee;
     TextView textView;
     TextView textViewHead;
     ArrayList<Department> listSubDepartment;
     ArrayList<Employee> listEmployee;
     DepartmentActivity.ListAdapter listAdapterDepartment;
-    EmployeeActivity.ListAdapter listAdapterEmployee;
     Department department;
     Boolean internet;
 
+    Button buttonAddSubDepartment;
     AsyncHttpClient httpClient;
     Button changeHead;
 
@@ -48,13 +49,15 @@ public class SubDepartmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub_department);
 
-//        internet = DepartmentActivity.isNetworkConnected();
+        internet = isNetworkConnected();
+
         department = (Department)getIntent().getSerializableExtra("department");
 
         getSupportActionBar().setTitle(department.getTitle());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         changeHead = (Button)findViewById(R.id.buttonChangeHead);
+        buttonAddSubDepartment = (Button)findViewById(R.id.buttonAddSubDepartment);
         textViewHead = (TextView)findViewById(R.id.textViewHead);
 
         if(department.getHeadUser() != null){
@@ -67,7 +70,14 @@ public class SubDepartmentActivity extends AppCompatActivity {
         listEmployee = new ArrayList<>();
 
         listViewSubDepartment = (ListView)findViewById(R.id.listViewSubDepartment);
-        listViewEmployee = (ListView)findViewById(R.id.listViewEmployeeInSubDepartment);
+
+        if(internet) {
+            changeHead.setVisibility(View.VISIBLE);
+            buttonAddSubDepartment.setVisibility(View.VISIBLE);
+        } else {
+            changeHead.setVisibility(View.INVISIBLE);
+            buttonAddSubDepartment.setVisibility(View.INVISIBLE);
+        }
 
         if (department.getOrgUnitChilds().size() != 0) {
             textView.setText("Sub Departments:");
@@ -84,8 +94,6 @@ public class SubDepartmentActivity extends AppCompatActivity {
                 listEmployee.add(department.getEmployees().get(i));
             }
         }
-        listAdapterEmployee = new EmployeeActivity.ListAdapter(this, 0, listEmployee);
-        listViewEmployee.setAdapter(listAdapterEmployee);
 
         listAdapterDepartment = new DepartmentActivity.ListAdapter(this, 0, listSubDepartment);
         listViewSubDepartment.setAdapter(listAdapterDepartment);
@@ -150,9 +158,8 @@ public class SubDepartmentActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void addEmployeeInSubDepartment(View view) {
-        Intent i = new Intent(SubDepartmentActivity.this, AddEmployeeActivity.class);
-        i.putExtra("department", department);
-        startActivity(i);
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 }

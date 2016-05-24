@@ -3,6 +3,7 @@ package com.assignment.departments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,12 +38,15 @@ public class EmployeeActivity extends AppCompatActivity {
     TextView textViewEmployees;
     Department department;
     AsyncHttpClient httpClient;
+    Button buttonAddEmployee;
+    Boolean internet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee);
 
+        internet = isNetworkConnected();
         department = (Department)getIntent().getSerializableExtra("subDepartment");
 
         getSupportActionBar().setTitle(department.getTitle());
@@ -50,7 +55,14 @@ public class EmployeeActivity extends AppCompatActivity {
         listEmployee = new ArrayList<>();
         listView = (ListView)findViewById(R.id.listViewEmployee);
         textViewEmployees = (TextView)findViewById(R.id.textViewEmployees);
+        buttonAddEmployee = (Button)findViewById(R.id.buttonAddEmployee);
 
+        if(internet) {
+            buttonAddEmployee.setVisibility(View.VISIBLE);
+        }
+        else {
+            buttonAddEmployee.setVisibility(View.INVISIBLE);
+        }
         if(department.getEmployees().size() != 0) {
             textViewEmployees.setText("Employees:");
             for(int i = 0; i < department.getEmployees().size(); i++){
@@ -138,5 +150,10 @@ public class EmployeeActivity extends AppCompatActivity {
             TextView position;
             TextView item;
         }
+    }
+
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 }

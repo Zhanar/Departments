@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class Database {
 
     private static final String DB_NAME = "Database1";
-    private static final int DB_VERSION = 7;
+    private static final int DB_VERSION = 1;
 
     // имя таблицы компаний, поля и запрос создания
     private static final String DEPARTMENT_TABLE = "OrgUnitVM";
@@ -83,7 +83,6 @@ public class Database {
             int ColumnOrgUnitChild = cursor.getColumnIndexOrThrow(DEPARTMENT_COLUMN_CHILD);
 
             do {
-
                 department = new Department();
 
                 department.setId(cursor.getInt(ColumnId));
@@ -130,9 +129,7 @@ public class Database {
             String departmentEmployees = gson.toJson(currentItem.getEmployees());
             contentValues.put(DEPARTMENT_COLUMN_EMPLOYEES, departmentEmployees);
 
-            //mDB.insertWithOnConflict(DEPARTMENT_TABLE, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
-            mDB.insert(DEPARTMENT_TABLE, null, contentValues);
-//            mDB.insertWithOnConflict(EMPLOYEE_TABLE, null, contentValuesEmployee, SQLiteDatabase.CONFLICT_REPLACE);
+            mDB.insertWithOnConflict(DEPARTMENT_TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         }
     }
 
@@ -143,17 +140,14 @@ public class Database {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            ContentValues cv = new ContentValues();
 
             db.execSQL(Database.DEPARTMENT_TABLE_CREATE);
-//            db.execSQL(Database.EMPLOYEE_TABLE_CREATE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
             db.execSQL("DROP TABLE IF EXISTS " + DEPARTMENT_TABLE);
-//            db.execSQL("DROP TABLE IF EXISTS " + EMPLOYEE_TABLE);
             this.onCreate(db);
         }
     }

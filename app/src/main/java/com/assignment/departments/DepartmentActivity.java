@@ -41,7 +41,6 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class DepartmentActivity extends AppCompatActivity {
-    final String TAG = "States";
 
     ListView listView;
     static ArrayList<Department> listDepartment;
@@ -72,9 +71,12 @@ public class DepartmentActivity extends AppCompatActivity {
         listView = (ListView)findViewById(R.id.listViewDepartment);
         listAdapter = new ListAdapter(this, 0, listDepartment);
         listView.setAdapter(listAdapter);
-
+        buttonAdd = (Button)findViewById(R.id.buttonAdd);
         if (internet) {
-            buttonAdd = (Button)findViewById(R.id.buttonAdd);
+
+            if (buttonAdd != null) {
+                buttonAdd.setVisibility(View.VISIBLE);
+            }
             loadOrgUnits();
 
             listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
@@ -90,6 +92,9 @@ public class DepartmentActivity extends AppCompatActivity {
             });
         }
         else {
+            if (buttonAdd != null) {
+                buttonAdd.setVisibility(View.INVISIBLE);
+            }
             listDepartment = database.GetDepartmentCollection();
             listAdapter = new ListAdapter(this, 0, listDepartment);
             listView.setAdapter(listAdapter);

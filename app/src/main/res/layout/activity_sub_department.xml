@@ -46,20 +46,4 @@
         android:layout_below="@+id/textViewDepartments"
         />
 
-    <Button
-        android:id="@+id/addEmployeeInSubDepartment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/addEmployee"
-        android:onClick="addEmployeeInSubDepartment"
-        android:layout_below="@+id/listViewSubDepartment"
-        />
-
-    <ListView
-        android:id="@+id/listViewEmployeeInSubDepartment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/addEmployeeInSubDepartment"
-        />
-
 </RelativeLayout>
