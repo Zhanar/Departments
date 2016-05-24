@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class Database {
 
-    private static final String DB_NAME = "Database";
+    private static final String DB_NAME = "Database2";
     private static final int DB_VERSION = 1;
 
     // имя таблицы компаний, поля и запрос создания
@@ -29,12 +29,12 @@ public class Database {
     public static final String DEPARTMENT_COLUMN_PARENT_ID = "orgUnitParentId";
     public static final String DEPARTMENT_COLUMN_EMPLOYEES_ID = "employeesId";
     public static final String DEPARTMENT_COLUMN_CHILD_ID = "orgUnitChildId";
-    public static final String DEPARTMENT_TABLE_CREATE = "create table " + DEPARTMENT_TABLE
-            + "(" + DEPARTMENT_COLUMN_ID + " integer primary key, "
-            + DEPARTMENT_COLUMN_NAME + " text "
-            + DEPARTMENT_COLUMN_HEAD_USER_ID + " integer "
-            + DEPARTMENT_COLUMN_PARENT_ID + " integer "
-            + DEPARTMENT_COLUMN_EMPLOYEES_ID + " integer "
+    public static final String DEPARTMENT_TABLE_CREATE = " create table " + DEPARTMENT_TABLE
+            + "( " + DEPARTMENT_COLUMN_ID + " integer primary key, "
+            + DEPARTMENT_COLUMN_NAME + " text, "
+            + DEPARTMENT_COLUMN_HEAD_USER_ID + " integer, "
+            + DEPARTMENT_COLUMN_PARENT_ID + " integer, "
+            + DEPARTMENT_COLUMN_EMPLOYEES_ID + " integer, "
             + DEPARTMENT_COLUMN_CHILD_ID + " integer );";
 
 
@@ -145,7 +145,7 @@ public class Database {
             do {
                 department.setId(cursor.getInt(ColumnId));
                 department.setTitle(cursor.getString(ColumnTitle));
-                department.setHeadUser(GetEmployee(cursor.getInt(ColumnHeadUserId)));
+//                department.setHeadUser(GetEmployee(cursor.getInt(ColumnHeadUserId)));
 //                department.setOrgUnitParrent(cursor.getInt());
                 department.setEmployees(GetEmployeeCollection(cursor.getInt(ColumnEmployeesId)));
 //                department.setOrgUnitChilds(cursor.getInt());
@@ -173,8 +173,10 @@ public class Database {
             if(currentItem.getHeadUser() != null) {
                 contentValues.put(DEPARTMENT_COLUMN_HEAD_USER_ID, currentItem.getHeadUser().getId());
             }
-            for(int j = 0; j < currentItem.getEmployees().size(); j++){
-                contentValues.put(DEPARTMENT_COLUMN_EMPLOYEES_ID, currentItem.getEmployees().get(j).getId());
+            if(currentItem.getEmployees().size()!=0){
+                for(int j = 0; j < currentItem.getEmployees().size(); j++){
+                    contentValues.put(DEPARTMENT_COLUMN_EMPLOYEES_ID, currentItem.getEmployees().get(j).getId());
+                }
             }
             for(int l = 0; l < currentItem.getOrgUnitChilds().size(); l++){
                 contentValues.put(DEPARTMENT_COLUMN_CHILD_ID, currentItem.getOrgUnitChilds().get(l).getId());
@@ -188,12 +190,14 @@ public class Database {
                 }
             }
 
-            for(int k = 0; k < currentItem.getEmployees().size(); k++){
-                contentValuesEmployee.put(EMPLOYEE_COLUMN_ID, currentItem.getEmployees().get(k).getId());
-                contentValuesEmployee.put(EMPLOYEE_COLUMN_NAME, currentItem.getEmployees().get(k).getLogin());
-                contentValuesEmployee.put(EMPLOYEE_COLUMN_PASSWORD, currentItem.getEmployees().get(k).getPassword());
+            if(currentItem.getEmployees().size()!=0){
+                for(int k = 0; k < currentItem.getEmployees().size(); k++){
+                    contentValuesEmployee.put(EMPLOYEE_COLUMN_ID, currentItem.getEmployees().get(k).getId());
+                    contentValuesEmployee.put(EMPLOYEE_COLUMN_NAME, currentItem.getEmployees().get(k).getLogin());
+                    contentValuesEmployee.put(EMPLOYEE_COLUMN_PASSWORD, currentItem.getEmployees().get(k).getPassword());
+                }
             }
-            //
+
             mDB.insert(DEPARTMENT_TABLE, null, contentValues);
             mDB.insert(EMPLOYEE_TABLE, null, contentValuesEmployee);
         }
@@ -210,8 +214,6 @@ public class Database {
 
             db.execSQL(Database.DEPARTMENT_TABLE_CREATE);
             db.execSQL(Database.EMPLOYEE_TABLE_CREATE);
-            db.execSQL("DROP TABLE OrgUnitVM");
-            db.execSQL("DROP TABLE UserVM");
 
             // названия компаний (групп)
             /*
@@ -260,6 +262,8 @@ public class Database {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL("DROP TABLE OrgUnitVM");
+            db.execSQL("DROP TABLE UserVM");
         }
     }
 }
