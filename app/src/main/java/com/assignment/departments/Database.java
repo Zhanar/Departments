@@ -61,11 +61,6 @@ public class Database {
             mDBHelper.close();
     }
 
-    // данные по компаниям
-    public Cursor getDepartmentData() {
-        return mDB.query(DEPARTMENT_TABLE, null, null, null, null, null, null);
-    }
-
     public ArrayList<Department> GetDepartmentCollection(){
 
         ArrayList<Department> result = new ArrayList<Department>();

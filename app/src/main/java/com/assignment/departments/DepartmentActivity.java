@@ -60,10 +60,6 @@ public class DepartmentActivity extends AppCompatActivity {
         database = new Database(this);
         database.open();
 
-        // готовим данные по группам для адаптера
-        Cursor cursor = database.getDepartmentData();
-        startManagingCursor(cursor);
-
         internet = isNetworkConnected();
         Toast.makeText(this, "Internet "+ internet, Toast.LENGTH_LONG).show();
 
